@@ -1,6 +1,5 @@
 #include QMK_KEYBOARD_H
-#include "5x6.h"
-// keymap.h
+
 #include "joystick.h"
 
 #ifndef ADC_PIN
@@ -8,10 +7,24 @@
 #    define ADC_PIN2 F5
 #endif
 
+
+
+void matrix_scan_user() {
+    int16_t val = (((uint32_t)timer_read() % 5000 - 2500) * 255) / 5000;
+
+    if (val != joystick_status.axes[1]) {
+        joystick_status.axes[1] = val;
+        joystick_status.status |= JS_UPDATED;
+    }
+}
+
+
 joystick_config_t joystick_axes[JOYSTICK_AXES_COUNT] = {
     [0] = JOYSTICK_AXIS_IN(ADC_PIN1, 900, 575, 285),
     [1] = JOYSTICK_AXIS_IN(ADC_PIN2, 900, 575, 285),
 };
+#ifdef ANALOG_JOYSTICK_ENABLE
+
 
 #define _QWERTY 0
 #define _LOWER 1
@@ -20,9 +33,9 @@ joystick_config_t joystick_axes[JOYSTICK_AXES_COUNT] = {
 #define RAISE MO(_RAISE)
 #define LOWER MO(_LOWER)
 
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+		const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_5x6(
-        KC_ESC , KC_1  , KC_2  , KC_3  , KC_4  , KC_5  ,                         KC_6  , KC_7  , KC_8  , KC_9  , KC_0  ,KC_BSPC,
+        KC_ESC , JS_BUTTON0  , KC_2  , KC_3  , KC_4  , KC_5  ,                         KC_6  , KC_7  , KC_8  , KC_9  , KC_0  ,KC_BSPC,
         KC_TAB , KC_Q  , KC_W  , KC_E  , KC_R  , KC_T  ,                         KC_Y  , KC_U  , KC_I  , KC_O  , KC_P  ,KC_MINS,
         KC_LSFT, KC_A  , KC_S  , KC_D  , KC_F  , KC_G  ,                         KC_H  , KC_J  , KC_K  , KC_L  ,KC_SCLN,KC_QUOT,
         KC_LCTL, KC_Z  , KC_X  , KC_C  , KC_V  , KC_B  ,                         KC_N  , KC_M  ,KC_COMM,KC_DOT ,KC_SLSH,KC_BSLASH,
@@ -55,6 +68,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                   _______,_______,            _______,_______
     )
 };
-
-
-

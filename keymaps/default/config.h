@@ -23,6 +23,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define MASTER_RIGHT
 
 //#define EE_HANDS
-// config.h
-#define JOYSTICK_BUTTON_COUNT 0
-#define JOYSTICK_AXES_COUNT 2
