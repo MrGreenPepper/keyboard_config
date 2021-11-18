@@ -83,34 +83,25 @@ void matrix_scan_user() {
  if (timer_elapsed(lastCursor) > cursorTimeout) {
         lastCursor = timer_read();
      
-		if (axisCoordinate(xPin, xOrigin) > 0) {
+
+
+		if (axisCoordinate(xPin, xOrigin) > 50) {
 			tap_code(KC_LEFT);
 		}
 
-		if (axisCoordinate(xPin, xOrigin) > 100) {
-			tap_code(KC_UP);
-		}
-
-		if (axisCoordinate(xPin, xOrigin) < 100) {
-			tap_code(KC_DOWN);
-		}
-
-		if (axisCoordinate(xPin, xOrigin) == 100) {
-			tap_code(KC_RIGHT);
-		}
-/*
-		if (axisCoordinate(xPin, xOrigin) < 0) {
+		if (axisCoordinate(xPin, xOrigin) < 50) {
 			tap_code(KC_RIGHT);
 		}
 
 
-		if (axisCoordinate(yPin, yOrigin) > 0) {
-			tap_code(KC_UP);
-		}
 
-		if (axisCoordinate(yPin, yOrigin) < 0) {
+		if (axisCoordinate(yPin, yOrigin) < 50) {
+			tap_code(KC_UP);
+ 		}
+
+		if (axisCoordinate(yPin, yOrigin) > 50) {
 			tap_code(KC_DOWN);
-		*/
+ 		}
  	}
 }
 
