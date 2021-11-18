@@ -22,26 +22,30 @@ KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_
 KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_P4, KC_P4, KC_P4, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, TO(3), KC_NO, KC_NO, KC_NO, TO(0), KC_NO, KC_NO, KC_NO)
 };
 
-uint8_t xPin  = F4;
-uint8_t yPin  = F5;   // VRy // B5
-uint8_t swPin = E6;  // SW
+uint8_t xPin  = F5;
+uint8_t yPin  = F4;   // VRy // B5
+uint8_t swPin = D1;  // SW
 
 // Set Parameters
 uint16_t minAxisValue = 0;
 uint16_t maxAxisValue = 1023;
 
-uint8_t maxCursorSpeed = 2;
-uint8_t precisionSpeed = 1;
-uint8_t speedRegulator = 20;  // Lower Values Create Faster Movement
-
 int8_t xPolarity = 1;
 int8_t yPolarity = 1;
 
-uint8_t cursorTimeout = 10;
+uint8_t cursorTimeout = 200;
+uint16_t lastCursor = 0;
 
 int16_t xOrigin, yOrigin;
 
-uint16_t lastCursor = 0;
+
+void matrix_init_keymap(void) {
+    // init pin? Is needed?
+    // setPinInputHigh(swPin);
+    // Account for drift
+    xOrigin = analogReadPin(xPin);
+    yOrigin = analogReadPin(yPin);
+}
 
 int16_t axisCoordinate(uint8_t pin, uint16_t origin) {
     int8_t  direction;
@@ -76,29 +80,37 @@ int16_t axisCoordinate(uint8_t pin, uint16_t origin) {
  
 
 void matrix_scan_user() {
+ if (timer_elapsed(lastCursor) > cursorTimeout) {
+        lastCursor = timer_read();
+     
+		if (axisCoordinate(xPin, xOrigin) > 0) {
+			tap_code(KC_LEFT);
+		}
 
-    if (axisCoordinate(xPin, xOrigin) > 0) {
-		tap_code(KC_LEFT);
-    }
+		if (axisCoordinate(xPin, xOrigin) > 100) {
+			tap_code(KC_UP);
+		}
 
-	if (axisCoordinate(xPin, xOrigin) < 0) {
-		tap_code(KC_RIGHT);
-    }
+		if (axisCoordinate(xPin, xOrigin) < 100) {
+			tap_code(KC_DOWN);
+		}
+
+		if (axisCoordinate(xPin, xOrigin) == 100) {
+			tap_code(KC_RIGHT);
+		}
+/*
+		if (axisCoordinate(xPin, xOrigin) < 0) {
+			tap_code(KC_RIGHT);
+		}
 
 
-    if (axisCoordinate(yPin, yOrigin) > 0) {
-		tap_code(KC_UP);
-    }
+		if (axisCoordinate(yPin, yOrigin) > 0) {
+			tap_code(KC_UP);
+		}
 
-	if (axisCoordinate(yPin, yOrigin) < 0) {
-		tap_code(KC_DOWN);
-    }
+		if (axisCoordinate(yPin, yOrigin) < 0) {
+			tap_code(KC_DOWN);
+		*/
+ 	}
 }
 
-void matrix_init_keymap(void) {
-    // init pin? Is needed?
-    setPinInputHigh(E6);
-    // Account for drift
-    xOrigin = analogReadPin(xPin);
-    yOrigin = analogReadPin(yPin);
-}
