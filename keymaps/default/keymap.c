@@ -23,7 +23,8 @@ joystick_config_t joystick_axes[JOYSTICK_AXES_COUNT] = {
     [0] = JOYSTICK_AXIS_IN(ADC_PIN1, 900, 575, 285),
     [1] = JOYSTICK_AXIS_IN(ADC_PIN2, 900, 575, 285),
 };
-#ifdef ANALOG_JOYSTICK_ENABLE
+
+
 
 
 #define _QWERTY 0
